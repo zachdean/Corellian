@@ -3,11 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Corellian", "Corellian\Corellian.csproj", "{E71A1917-075C-49F6-B683-8A123B283C11}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Corellian.Core", "Corellian\Corellian.Core.csproj", "{E71A1917-075C-49F6-B683-8A123B283C11}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Corellian.Xamarin", "Corellian.Xamarin\Corellian.Xamarin.csproj", "{E0601F24-23D8-4601-8C5E-0F13B405DFA4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Corellian.Test", "Corellian.Test\Corellian.Test.csproj", "{C29927FB-8857-477F-B440-A03089286D1D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Corellian.Xamarin.Test", "Corellian.Xamarin.Test\Corellian.Xamarin.Test.csproj", "{BC638B85-5955-4512-A5BC-71A3A4CC0997}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{C29927FB-8857-477F-B440-A03089286D1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C29927FB-8857-477F-B440-A03089286D1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C29927FB-8857-477F-B440-A03089286D1D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC638B85-5955-4512-A5BC-71A3A4CC0997}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC638B85-5955-4512-A5BC-71A3A4CC0997}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC638B85-5955-4512-A5BC-71A3A4CC0997}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC638B85-5955-4512-A5BC-71A3A4CC0997}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,9 +1,9 @@
 using System;
 using Xunit;
 
-namespace Corellian.Test
+namespace Corellian.Xamarin.Test
 {
-    public class UnitTest1
+    public class NavigationViewTests
     {
         [Fact]
         public void Test1()
