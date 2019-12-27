@@ -1,13 +1,10 @@
-﻿using Corellian.Extensions;
-using ReactiveUI;
+﻿using ReactiveUI;
 using Splat;
 using System;
-using System.Collections.Generic;
 using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
-using System.Text;
 using Xamarin.Forms;
 
 namespace Corellian.Xamarin

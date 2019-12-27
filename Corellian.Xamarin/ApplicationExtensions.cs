@@ -1,7 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Xamarin.Forms;
 
 namespace Corellian.Xamarin
@@ -11,11 +9,9 @@ namespace Corellian.Xamarin
 
         public static void InitializeCorellian<TViewModel>(this Application app, IServiceProvider provider) where TViewModel : IViewModel
         {
-            app.MainPage = provider.GetNavigationView();
-
             var navigationService = provider.GetRequiredService<INavigationService>();
-            navigationService.PushPage<TViewModel>(true, false).Subscribe();
+            navigationService.PushPage<TViewModel>(resetStack: true).Subscribe();
+            app.MainPage = provider.GetNavigationView();
         }
-
     }
 }

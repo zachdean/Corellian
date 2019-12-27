@@ -1,6 +1,6 @@
-﻿using Corellian.Extensions;
-using CorellianSample.ViewModels;
+﻿using CorellianSample.ViewModels;
 using CorellianSample.Views;
+using Corellian;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CorellianSample

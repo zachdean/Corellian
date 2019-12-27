@@ -1,8 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Corellian.Extensions;
 using ReactiveUI;
 
 namespace Corellian.Xamarin

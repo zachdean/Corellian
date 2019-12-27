@@ -1,11 +1,8 @@
-﻿using Corellian.Extensions;
-using Corellian.Core.Services;
+﻿using Corellian.Core.Services;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using ReactiveUI;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Xunit;
 using FluentAssertions;
 using Splat;

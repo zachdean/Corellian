@@ -1,8 +1,6 @@
-﻿using Corellian.Extensions;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Splat;
 using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reactive;
@@ -54,9 +52,15 @@ namespace Corellian.Core.Services
         public IView View { get; }
        
 
-        public IObservable<Unit> PushModal<TViewModel>(bool withNavigationPage = true) where TViewModel : IViewModel
+        public IObservable<Unit> PushModal<TViewModel>(bool withNavigationPage = true, params object[] args) where TViewModel : IViewModel
         {
             TViewModel viewModel = ResolveViewModel<TViewModel>();
+
+            if (viewModel is INavigateWithParamters paramViewModel)
+            {
+                paramViewModel.Initialize(args);
+            }
+
             return View
                 .PushModal(viewModel, null, withNavigationPage)
                 .Do(_ =>
@@ -66,9 +70,15 @@ namespace Corellian.Core.Services
                 });
         }
 
-        public IObservable<Unit> PushPage<TViewModel>(bool resetStack = false, bool animate = true) where TViewModel : IViewModel
+        public IObservable<Unit> PushPage<TViewModel>(bool resetStack = false, bool animate = true, params object[] args) where TViewModel : IViewModel
         {
             TViewModel viewModel = ResolveViewModel<TViewModel>();
+
+            if (viewModel is INavigateWithParamters paramViewModel)
+            {
+                paramViewModel.Initialize(args);
+            }
+
             return View
                 .PushPage(viewModel, null, resetStack, animate)
                 .Do(_ =>

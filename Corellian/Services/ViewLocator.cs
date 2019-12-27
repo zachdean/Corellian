@@ -1,8 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using ReactiveUI;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Corellian.Core.Services
 {
