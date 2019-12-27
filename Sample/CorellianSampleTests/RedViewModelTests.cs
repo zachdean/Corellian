@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using NSubstitute;
 using Corellian;
-using CorellianSample;
 using CorellianSample.ViewModels;
 using Xunit;
 

@@ -1,11 +1,8 @@
 using System;
-using System.Reactive;
 using System.Reactive.Linq;
 using NSubstitute;
 using CorellianSample.ViewModels;
 using Xunit;
-using Splat;
-using CorellianSample;
 using Corellian;
 
 namespace CorellianSampleTests
