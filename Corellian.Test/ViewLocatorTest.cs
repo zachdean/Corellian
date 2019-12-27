@@ -54,6 +54,8 @@ namespace Corellian.Test
         public class TestLocatableClass : ILocatable
         {
             public Type ViewModelInterface => typeof(TestClass);
+
+            public string Id => throw new NotImplementedException();
         }
     }
 }

@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Text;
 using Xunit;
 using FluentAssertions;
+using Splat;
 
 namespace Corellian.Test
 {
@@ -18,9 +19,10 @@ namespace Corellian.Test
         {
             var services = new ServiceCollection();
 
-            services.AddCorellianCore();
-
             services.AddSingleton(Substitute.For<IView>());
+            services.AddSingleton(Substitute.For<IFullLogger>());
+
+            services.AddCorellianCore();
 
             var provider = services.BuildServiceProvider();
 
