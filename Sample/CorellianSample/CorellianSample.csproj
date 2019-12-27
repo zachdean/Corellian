@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <ApplicationIcon />
+        <OutputType>Library</OutputType>
+        <StartupObject />
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="ReactiveUI.XamForms" Version="11.0.6" />
+        <PackageReference Include="Xamarin.Forms" Version="4.4.0.991265" />
+    </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\..\Corellian.Xamarin\Corellian.Xamarin.csproj" />
+    </ItemGroup>
+</Project>
