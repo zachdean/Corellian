@@ -1,6 +1,7 @@
 using NSubstitute;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Collections.Generic;
 using Xunit;
 using FluentAssertions;
 using System.Collections.Immutable;
@@ -220,7 +221,7 @@ namespace Corellian.Test
         [InlineData(false)]
         public void PushModal_ExpectSuccess(bool withNavigationPage)
         {
-            navigationService.PushModal<ITestInterface>(withNavigationPage);
+            navigationService.PushModal<ITestInterface>(withNavigationPage: withNavigationPage);
 
             serviceProvider.Received().GetService<ITestInterface>();
             view.Received().PushModal(Arg.Any<TestClass>(), null, withNavigationPage);
@@ -229,11 +230,11 @@ namespace Corellian.Test
         [Fact]
         public void PushModal_WithArgs_ExpectSuccess()
         {
-            var args = Enumerable.Range(1, 10).Cast<object>().ToArray();
+            var parameter = new NavigationParameter { { "TestString", "TestValue" } };
 
-            navigationService.PushModal<ITestArgs>(args: args);
+            navigationService.PushModal<ITestArgs>(parameter);
 
-            paramterViewModel.Args.Should().BeEquivalentTo(args);
+            paramterViewModel.Parameter.Should().BeEquivalentTo(parameter);
         }
 
         [Theory]
@@ -243,7 +244,7 @@ namespace Corellian.Test
         [InlineData(true, false)]
         public void PushPage_ExpectSuccess(bool resetStack, bool animate)
         {
-            navigationService.PushPage<ITestInterface>(resetStack, animate);
+            navigationService.PushPage<ITestInterface>(resetStack: resetStack, animate :animate);
 
             serviceProvider.Received().GetService<ITestInterface>();
             view.Received().PushPage(Arg.Any<TestClass>(), null, resetStack, animate);
@@ -252,25 +253,12 @@ namespace Corellian.Test
         [Fact]
         public void PushPage_WithArgs_ExpectSuccess()
         {
-            var args = Enumerable.Range(1, 10).Cast<object>().ToArray();
+            var parameter = new NavigationParameter{{"TestString", "TestValue"}};
                         
-            navigationService.PushPage<ITestArgs>(args: args);
+            navigationService.PushPage<ITestArgs>(parameter);
 
-            paramterViewModel.Args.Should().BeEquivalentTo(args);
+            paramterViewModel.Parameter.Should().BeEquivalentTo(parameter);
         }
-
-        [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void PushPage_WithArgsAndReset_ExpectSuccess(bool resetStack)
-        {
-            var args = Enumerable.Range(1, 10).Cast<object>().ToArray();
-
-            navigationService.PushPage<ITestArgs>(resetStack,args: args);
-
-            paramterViewModel.Args.Should().BeEquivalentTo(args);
-        }
-
 
         /// <summary>
         /// Makes sure that the push and pop methods work correctly.
@@ -331,7 +319,7 @@ namespace Corellian.Test
         public async Task Should_Push_Modal_Navigation_Page(bool withNavigationPage)
         {
             // When
-            await navigationService.PushModal<ITestInterface>(withNavigationPage);
+            await navigationService.PushModal<ITestInterface>(withNavigationPage: withNavigationPage);
 
             // Then
             await view.Received().PushModal(Arg.Any<ITestInterface>(), null, withNavigationPage);
@@ -565,17 +553,17 @@ namespace Corellian.Test
         }
 
 
-        private interface ITestArgs : IViewModel, INavigateWithParamters { }
+        private interface ITestArgs : IViewModel, INavigatable { }
         private class TestArgsClass : ITestArgs
         {
             public string Id => nameof(TestArgsClass);
 
-            public void Initialize(object[] args)
+            public void WhenNavigatingTo(INavigationParameter parameter)
             {
-                Args = args;
+                Parameter = parameter;
             }
 
-            internal object[] Args { get; private set; }
+            internal INavigationParameter Parameter { get; private set; }
         }
 
 

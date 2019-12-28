@@ -52,13 +52,13 @@ namespace Corellian.Core.Services
         public IView View { get; }
        
 
-        public IObservable<Unit> PushModal<TViewModel>(bool withNavigationPage = true, params object[] args) where TViewModel : IViewModel
+        public IObservable<Unit> PushModal<TViewModel>(INavigationParameter parameter = null, bool withNavigationPage = true) where TViewModel : IViewModel
         {
             TViewModel viewModel = ResolveViewModel<TViewModel>();
 
-            if (viewModel is INavigateWithParamters paramViewModel)
+            if (viewModel is INavigatable paramViewModel)
             {
-                paramViewModel.Initialize(args);
+                paramViewModel.WhenNavigatingTo(parameter);
             }
 
             return View
@@ -70,13 +70,13 @@ namespace Corellian.Core.Services
                 });
         }
 
-        public IObservable<Unit> PushPage<TViewModel>(bool resetStack = false, bool animate = true, params object[] args) where TViewModel : IViewModel
+        public IObservable<Unit> PushPage<TViewModel>(INavigationParameter parameter = null, bool resetStack = false, bool animate = true) where TViewModel : IViewModel
         {
             TViewModel viewModel = ResolveViewModel<TViewModel>();
 
-            if (viewModel is INavigateWithParamters paramViewModel)
+            if (viewModel is INavigatable paramViewModel)
             {
-                paramViewModel.Initialize(args);
+                paramViewModel.WhenNavigatingTo(parameter);
             }
 
             return View
