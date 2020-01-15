@@ -17,6 +17,7 @@ namespace CorellianSample.ViewModels
             OpenModal = ReactiveCommand
                         .CreateFromObservable(() =>
                             this.NavigationService.PushModal<ISecondModalViewModel>(),
+                            NavigationService.CanNavigate,
                             outputScheduler: RxApp.MainThreadScheduler);
 
             PopModal = ReactiveCommand

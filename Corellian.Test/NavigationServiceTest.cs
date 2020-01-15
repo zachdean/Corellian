@@ -368,6 +368,25 @@ namespace Corellian.Test
             // Then
             result.Should().BeOfType<InvalidOperationException>();
         }
+
+        [Fact]
+        public async Task PushModel_ExpectCanNavigateToBeFalse()
+        {
+            var canNavigateStack = new List<bool>();
+            navigationService.CanNavigate.Subscribe(x => canNavigateStack.Add(x));
+
+            // When
+            await navigationService.PushModal<ITestInterface>();
+
+            // Then
+            await view.Received().PushModal(Arg.Any<IViewModel>(), Arg.Any<string>());
+
+            canNavigateStack.Should().HaveCount(3);
+            canNavigateStack[0].Should().BeTrue();
+            canNavigateStack[1].Should().BeFalse();
+            canNavigateStack[2].Should().BeTrue();
+        }
+
         #endregion
 
         /// <summary>
@@ -436,6 +455,24 @@ namespace Corellian.Test
 
             // Then
             result.Should().ContainSingle();
+        }
+
+        [Fact]
+        public async Task PushPage_ExpectCanNavigateToBeFalse()
+        {
+            var canNavigateStack = new List<bool>();
+            navigationService.CanNavigate.Subscribe(x => canNavigateStack.Add(x));
+
+            // When
+            await navigationService.PushPage<ITestInterface>();
+
+            // Then
+            await view.Received().PushPage(Arg.Any<IViewModel>(), null, false, true);
+
+            canNavigateStack.Should().HaveCount(3);
+            canNavigateStack[0].Should().BeTrue();
+            canNavigateStack[1].Should().BeFalse();
+            canNavigateStack[2].Should().BeTrue();
         }
         #endregion
 

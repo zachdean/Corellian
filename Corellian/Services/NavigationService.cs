@@ -7,7 +7,7 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Runtime.CompilerServices;
-
+using System.Threading.Tasks;
 
 [assembly: InternalsVisibleTo("Corellian.Test")]
 [assembly: InternalsVisibleTo("Corellian.Xamarin")]
@@ -26,6 +26,7 @@ namespace Corellian.Core.Services
         /// Gets the page subject.
         /// </summary>
         internal readonly BehaviorSubject<IImmutableList<IViewModel>> PageSubject;
+        internal readonly BehaviorSubject<bool> CanNavigateSubject;
         /// <summary>
         /// Gets the modal navigation stack.
         /// </summary>
@@ -50,44 +51,66 @@ namespace Corellian.Core.Services
         public IObservable<Unit> PopToRootPage(bool animate = true) => View.PopToRootPage(animate).Do(_ => PopRootAndTick(PageSubject));
 
         public IView View { get; }
-       
+
+        public IObservable<bool> CanNavigate => CanNavigateSubject.AsObservable();
 
         public IObservable<Unit> PushModal<TViewModel>(INavigationParameter parameter = null, bool withNavigationPage = true) where TViewModel : IViewModel
         {
-            TViewModel viewModel = ResolveViewModel<TViewModel>();
-
-            if (viewModel is INavigatable paramViewModel)
+            CanNavigateSubject.OnNext(false);
+            try
             {
-                paramViewModel.WhenNavigatingTo(parameter);
-            }
+                TViewModel viewModel = ResolveViewModel<TViewModel>();
 
-            return View
-                .PushModal(viewModel, null, withNavigationPage)
-                .Do(_ =>
+                if (viewModel is INavigatable paramViewModel)
                 {
-                    AddToStackAndTick(ModalSubject, viewModel, false);
-                    logger.Debug("Added modal '{modal.Id}' (contract '{contract}') to stack.");
-                });
+                    paramViewModel.WhenNavigatingTo(parameter);
+                }
+
+                return View
+                    .PushModal(viewModel, null, withNavigationPage)
+                    .Do(_ =>
+                    {
+                        AddToStackAndTick(ModalSubject, viewModel, false);
+                        logger.Debug("Added modal '{modal.Id}' (contract '{contract}') to stack.");
+                        CanNavigateSubject.OnNext(true);
+                    });
+            }
+            catch (Exception)
+            {
+                //prevent exceptions from getting this stuck
+                CanNavigateSubject.OnNext(true);
+                throw;
+            }
         }
 
         public IObservable<Unit> PushPage<TViewModel>(INavigationParameter parameter = null, bool resetStack = false, bool animate = true) where TViewModel : IViewModel
         {
-            TViewModel viewModel = ResolveViewModel<TViewModel>();
-
-            if (viewModel is INavigatable paramViewModel)
+            CanNavigateSubject.OnNext(false);
+            try
             {
-                paramViewModel.WhenNavigatingTo(parameter);
-            }
+                TViewModel viewModel = ResolveViewModel<TViewModel>();
 
-            return View
-                .PushPage(viewModel, null, resetStack, animate)
-                .Do(_ =>
+                if (viewModel is INavigatable paramViewModel)
                 {
-                    AddToStackAndTick(PageSubject, viewModel, resetStack);
-                    logger.Debug($"Added page '{viewModel.Id}' to stack.");
-                });
+                    paramViewModel.WhenNavigatingTo(parameter);
+                }
 
-            
+                return View
+                    .PushPage(viewModel, null, resetStack, animate)
+                    .Do(_ =>
+                    {
+                        AddToStackAndTick(PageSubject, viewModel, resetStack);
+                        logger.Debug($"Added page '{viewModel.Id}' to stack.");
+                        CanNavigateSubject.OnNext(true);
+                    });
+
+            }
+            catch (Exception)
+            {
+                //prevent exceptions from getting this stuck
+                CanNavigateSubject.OnNext(true);
+                throw;
+            }
         }
 
         /// <summary>
@@ -110,6 +133,7 @@ namespace Corellian.Core.Services
             View = view;
             ModalSubject = new BehaviorSubject<IImmutableList<IViewModel>>(ImmutableList<IViewModel>.Empty);
             PageSubject = new BehaviorSubject<IImmutableList<IViewModel>>(ImmutableList<IViewModel>.Empty);
+            CanNavigateSubject = new BehaviorSubject<bool>(true);
 
             View.PagePopped.Do(poppedPage =>
             {
