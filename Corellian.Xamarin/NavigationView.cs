@@ -5,6 +5,7 @@ using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace Corellian.Xamarin
@@ -83,12 +84,15 @@ namespace Corellian.Xamarin
                         return page;
                     },
                     CurrentThreadScheduler.Instance)
-                .ObserveOn(CurrentThreadScheduler.Instance)
+                .ObserveOn(RxApp.MainThreadScheduler)
                 .SelectMany(
-                    page =>
-                        Navigation
-                            .PushModalAsync(page)
-                            .ToObservable());
+                    page => { MainThread.BeginInvokeOnMainThread(async () =>
+                     {
+                         await Navigation
+                                 .PushModalAsync(page);
+                     });
+                        return Observable.Return(Unit.Default);
+                    });
 
         /// <inheritdoc />
         public IObservable<Unit> PushPage(

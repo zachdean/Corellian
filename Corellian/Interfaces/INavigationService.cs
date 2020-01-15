@@ -17,6 +17,7 @@ namespace Corellian
         // Summary:
         //     Gets the current view on the stack.
         IView View { get; }
+        IObservable<bool> CanNavigate { get; }
 
         //
         // Summary:
