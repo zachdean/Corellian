@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Reactive;
 using System.Reactive.Linq;
 using Corellian;
+using Corellian.Core.Extensions;
 using ReactiveUI;
 
 namespace CorellianSample.ViewModels
@@ -19,24 +20,13 @@ namespace CorellianSample.ViewModels
 
         public RedViewModel(INavigationService viewStackService) : base(viewStackService)
         {
-            PopModal = ReactiveCommand
-                .CreateFromObservable(() =>
-                    this.NavigationService.PopModal(),
-                    outputScheduler: RxApp.MainThreadScheduler);
+            PopModal = NavigationService.GetPopModalCommand();
 
-            PopPage = ReactiveCommand
-                .CreateFromObservable(() =>
-                    this.NavigationService.PopPage(),
-                    outputScheduler: RxApp.MainThreadScheduler);
+            PopPage = NavigationService.GetPopPageCommand();
 
-            PushPage = ReactiveCommand
-                .CreateFromObservable(() =>
-                    this.NavigationService.PushPage<IRedViewModel>(),
-                    outputScheduler: RxApp.MainThreadScheduler);
-            PopToRoot = ReactiveCommand
-                .CreateFromObservable(() =>
-                    this.NavigationService.PopToRootPage(),
-                    outputScheduler: RxApp.MainThreadScheduler);
+            PushPage = NavigationService.GetPushPageCommand<IRedViewModel>();
+
+            PopToRoot = NavigationService.GetPopToRootPageCommand();
 
             PopModal.Subscribe(x => Debug.WriteLine("PagePushed"));
             PopModal.ThrownExceptions.Subscribe(error => Interactions.ErrorMessage.Handle(error).Subscribe());

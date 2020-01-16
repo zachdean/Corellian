@@ -9,6 +9,8 @@
     x:TypeArguments="vm:ISecondModalViewModel">
     <ContentPage.Content>
         <StackLayout>
+            <Label Text="{Binding PassedParameter, StringFormat='The parameter passed is: {0}'}"
+                   Margin="5"/>
             <Button x:Name="PushPage" Text="Push Page" />
             <Button x:Name="PopModal" Text="Pop Modal" />
         </StackLayout>

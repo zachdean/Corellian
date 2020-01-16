@@ -9,6 +9,8 @@
     x:TypeArguments="vm:IFirstModalViewModel">
     <ContentPage.Content>
         <StackLayout>
+            <Label Text="Parameter" />
+            <Entry Text="{Binding ParameterString}" Placeholder="Enter text here to pass a parameter" Margin="10" />
             <Button x:Name="OpenSecondModal" Text="Second Modal" />
             <Button x:Name="PopModal" Text="Pop Modal" />
         </StackLayout>

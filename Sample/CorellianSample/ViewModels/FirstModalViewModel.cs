@@ -3,6 +3,8 @@ using ReactiveUI;
 using System;
 using System.Diagnostics;
 using Corellian;
+using Corellian.Core.Extensions;
+using ReactiveUI.Fody.Helpers;
 
 namespace CorellianSample.ViewModels
 {
@@ -12,18 +14,14 @@ namespace CorellianSample.ViewModels
 
         public ReactiveCommand<Unit, Unit> PopModal { get; set; }
 
+        [Reactive] public string ParameterString { get; set; }
+
         public FirstModalViewModel(INavigationService viewStackService) : base(viewStackService)
         {
-            OpenModal = ReactiveCommand
-                        .CreateFromObservable(() =>
-                            this.NavigationService.PushModal<ISecondModalViewModel>(),
-                            NavigationService.CanNavigate,
-                            outputScheduler: RxApp.MainThreadScheduler);
+            OpenModal = NavigationService.GetPushModalCommand<ISecondModalViewModel>(
+                () => new NavigationParameter { { SecondModalViewModel.ParameterKey, ParameterString } });
 
-            PopModal = ReactiveCommand
-                        .CreateFromObservable(() =>
-                            this.NavigationService.PopModal(),
-                            outputScheduler: RxApp.MainThreadScheduler);
+            PopModal = NavigationService.GetPopModalCommand();
 
             OpenModal.Subscribe(x => Debug.WriteLine("PagePushed"));
             PopModal.Subscribe(x => Debug.WriteLine("PagePoped"));
