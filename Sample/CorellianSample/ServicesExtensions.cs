@@ -13,7 +13,11 @@ namespace CorellianSample
             services.AddView<IFirstModalViewModel, FirstModalView>();
             services.AddView<ISecondModalViewModel, SecondModalView>();
             services.AddView<IRedViewModel, RedView>();
+            return services;
+        }
 
+        public static IServiceCollection AddViewModels(this IServiceCollection services)
+        {
             services.AddTransient<IFirstModalViewModel, FirstModalViewModel>();
             services.AddTransient<IHomeViewModel, HomeViewModel>();
             services.AddTransient<ISecondModalViewModel, SecondModalViewModel>();

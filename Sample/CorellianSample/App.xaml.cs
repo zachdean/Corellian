@@ -22,9 +22,9 @@ namespace CorellianSample
 
             var services = new ServiceCollection();
 
-            services.AddCorellian();
-
-            services.AddViews();
+            services.AddCorellian()
+                .AddViewModels()
+                .AddViews();
 
             ServiceCollection = services;
             Provider = services.BuildServiceProvider();
