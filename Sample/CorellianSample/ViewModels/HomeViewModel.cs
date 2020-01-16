@@ -3,6 +3,7 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Corellian;
+using Corellian.Core.Extensions;
 using ReactiveUI;
 
 namespace CorellianSample.ViewModels
@@ -17,15 +18,9 @@ namespace CorellianSample.ViewModels
         public HomeViewModel(INavigationService viewStackService = null)
             : base(viewStackService)
         {
-            OpenModal = ReactiveCommand
-                .CreateFromObservable(() =>
-                    this.NavigationService.PushModal<IFirstModalViewModel>(),
-                    outputScheduler: RxApp.MainThreadScheduler);
+            OpenModal = NavigationService.GetPushModalCommand<IFirstModalViewModel>();
 
-            PushPage = ReactiveCommand
-                .CreateFromObservable(() =>
-                    this.NavigationService.PushPage<IRedViewModel>(),
-                    outputScheduler: RxApp.MainThreadScheduler);
+            PushPage = NavigationService.GetPushPageCommand<IRedViewModel>();
 
             PushPage.ThrownExceptions.Subscribe(error => Interactions.ErrorMessage.Handle(error).Subscribe());
             OpenModal.ThrownExceptions.Subscribe(error => Interactions.ErrorMessage.Handle(error).Subscribe());
