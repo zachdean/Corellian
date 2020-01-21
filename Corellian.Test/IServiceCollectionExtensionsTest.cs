@@ -6,37 +6,70 @@ using System;
 using Xunit;
 using FluentAssertions;
 using Splat;
+using System.Linq;
+using FluentAssertions.Microsoft.Extensions.DependencyInjection;
 
 namespace Corellian.Test
 {
     public class IServiceCollectionExtensionsTest
     {
+        private readonly IServiceCollection services;
+
+        public IServiceCollectionExtensionsTest()
+        {
+            services = new ServiceCollection();
+        }
+
         [Fact]
         public void AddCorellianCore_ExpectRegistered()
         {
-            var services = new ServiceCollection();
-
             services.AddSingleton(Substitute.For<IView>());
             services.AddSingleton(Substitute.For<IFullLogger>());
 
             services.AddCorellianCore();
 
-            var provider = services.BuildServiceProvider();
+            services.Should()
+                .HaveService<IViewLocator>()
+                .AsSingleton();
+            services.Should()
+                .HaveService<INavigationService>()
+                .AsSingleton();
 
-            provider.GetRequiredService<IViewLocator>().Should().BeOfType<Core.Services.ViewLocator>();
-            provider.GetRequiredService<INavigationService>().Should().BeOfType<NavigationService>();
-
+            services.Should().HaveCount(4);
         }
 
 
         [Fact]
         public void AddCorellianCore_ThrowIfViewIsNotRegistered()
         {
-            var services = new ServiceCollection();
-
             var resalt = Record.Exception(services.AddCorellianCore);
 
             resalt.Should().BeOfType<InvalidOperationException>();
         }
+
+        [Fact]
+        public void AddView_RegisteresView()
+        {
+            services.AddView<ITestViewModel, TestView>();
+
+            services.Should()
+                .HaveService<IViewFor<ITestViewModel>>()
+                .AsTransient()
+                .And
+                .HaveCount(1);
+        }
+
+        public interface ITestViewModel : IViewModel
+        {
+        }
+
+        public class TestView : IViewFor<ITestViewModel>
+        {
+            public ITestViewModel ViewModel { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+            object IViewFor.ViewModel { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        }
+
     }
+
+    
 }

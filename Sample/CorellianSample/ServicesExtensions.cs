@@ -9,10 +9,10 @@ namespace CorellianSample
     {
         public static IServiceCollection AddViews(this IServiceCollection services)
         {
-            services.AddView<IHomeViewModel, HomeView>();
-            services.AddView<IFirstModalViewModel, FirstModalView>();
-            services.AddView<ISecondModalViewModel, SecondModalView>();
-            services.AddView<IRedViewModel, RedView>();
+            services.AddView<IHomeViewModel, HomeView>()
+                    .AddView<IFirstModalViewModel, FirstModalView>()
+                    .AddView<ISecondModalViewModel, SecondModalView>()
+                    .AddView<IRedViewModel, RedView>();
             return services;
         }
 
