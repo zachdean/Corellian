@@ -54,20 +54,20 @@ namespace Corellian.Core.Services
 
         public IObservable<bool> CanNavigate => CanNavigateSubject.AsObservable();
 
-        public IObservable<Unit> PushModal<TViewModel>(INavigationParameter parameter = null, bool withNavigationPage = true) where TViewModel : IViewModel
+        public IObservable<Unit> PushModal<TViewModel>(INavigationParameter? parameter = null, bool withNavigationPage = true) where TViewModel : IViewModel
         {
             CanNavigateSubject.OnNext(false);
             try
             {
                 TViewModel viewModel = ResolveViewModel<TViewModel>();
 
-                if (viewModel is INavigatable paramViewModel)
+                if (parameter != null && viewModel is INavigatable paramViewModel)
                 {
                     paramViewModel.WhenNavigatingTo(parameter);
                 }
 
                 return View
-                    .PushModal(viewModel, null, withNavigationPage)
+                    .PushModal(viewModel, withNavigationPage)
                     .Do(_ =>
                     {
                         AddToStackAndTick(ModalSubject, viewModel, false);
@@ -83,20 +83,20 @@ namespace Corellian.Core.Services
             }
         }
 
-        public IObservable<Unit> PushPage<TViewModel>(INavigationParameter parameter = null, bool resetStack = false, bool animate = true) where TViewModel : IViewModel
+        public IObservable<Unit> PushPage<TViewModel>(INavigationParameter? parameter = null, bool resetStack = false, bool animate = true) where TViewModel : IViewModel
         {
             CanNavigateSubject.OnNext(false);
             try
             {
                 TViewModel viewModel = ResolveViewModel<TViewModel>();
 
-                if (viewModel is INavigatable paramViewModel)
+                if ( parameter != null && viewModel is INavigatable paramViewModel)
                 {
                     paramViewModel.WhenNavigatingTo(parameter);
                 }
 
                 return View
-                    .PushPage(viewModel, null, resetStack, animate)
+                    .PushPage(viewModel, resetStack, animate)
                     .Do(_ =>
                     {
                         AddToStackAndTick(PageSubject, viewModel, resetStack);

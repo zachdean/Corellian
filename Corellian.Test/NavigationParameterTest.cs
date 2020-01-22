@@ -11,6 +11,7 @@ namespace Corellian.Test
         private readonly INavigationParameter navigationParameter;
         private const string Enum = "Enum";
         private const string String = "String";
+        private const string Null = "Null";
         private const string Class = "TestClass";
         private const string Struct = "TestStruct";
 
@@ -23,7 +24,8 @@ namespace Corellian.Test
                 {Enum, TestEnum.Three },
                 {String, String },
                 {Class, TestClass.GetClass()},
-                {Struct, TestStruct.GetStruct() }
+                {Struct, TestStruct.GetStruct() },
+                {Null, null}
             };
         }
 
@@ -83,13 +85,22 @@ namespace Corellian.Test
 
             result.Should().BeOfType<KeyNotFoundException>();
         }
-
+               
         [Fact]
         public void GetRequiredParameter_WithWrongType_ExpectKeyNotFoundException()
         {
             var result = Record.Exception(() => navigationParameter.GetRequiredParameter<TestEnum>(String));
 
             result.Should().BeOfType<InvalidCastException>();
+        }
+
+        [Fact]
+        public void GetRequiredParameter_WithNullValue_ExpectArgumentNullException()
+        {
+
+            var result = Record.Exception(() => navigationParameter.GetRequiredParameter<string>(Null));
+
+            result.Should().BeOfType<ArgumentNullException>();
         }
 
         private enum TestEnum

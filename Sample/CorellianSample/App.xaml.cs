@@ -12,7 +12,9 @@ namespace CorellianSample
     public partial class App : Application
     {
         public IServiceCollection ServiceCollection { get; }
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         public static IServiceProvider Provider { get; private set; }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
         public App()
         {

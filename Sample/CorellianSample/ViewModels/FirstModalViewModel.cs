@@ -14,7 +14,7 @@ namespace CorellianSample.ViewModels
 
         public ReactiveCommand<Unit, Unit> PopModal { get; set; }
 
-        [Reactive] public string ParameterString { get; set; }
+        [Reactive] public string? ParameterString { get; set; }
 
         public FirstModalViewModel(INavigationService viewStackService) : base(viewStackService)
         {

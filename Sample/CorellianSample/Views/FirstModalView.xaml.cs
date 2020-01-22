@@ -5,7 +5,7 @@ using Xamarin.Forms;
 
 namespace CorellianSample.Views
 {
-	public partial class FirstModalView : ReactiveContentPage<IFirstModalViewModel>
+	public partial class FirstModalView
     {
 		public FirstModalView()
         {

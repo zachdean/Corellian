@@ -12,13 +12,13 @@ namespace Corellian.Core.Services
             this.serviceProvider = serviceProvider;
         }
 
-        public IViewFor ResolveView<T>(T viewModel, string contract = null) where T : class
+        public IViewFor ResolveView<T>(T viewModel, string? contract = null) where T : class
         {
             //get viewfor interface
             Type iViewFor = typeof(IViewFor<>).MakeGenericType(viewModel is ILocatable intefaceLocation ? intefaceLocation.ViewModelInterface : viewModel.GetType());
 
             //get registered view
-            return serviceProvider.GetRequiredService(iViewFor) as IViewFor;
+            return (IViewFor)serviceProvider.GetRequiredService(iViewFor);
 
         }
     }

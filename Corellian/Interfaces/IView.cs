@@ -43,10 +43,9 @@ namespace Corellian
         /// Pushes the modal onto the modal stack.
         /// </summary>
         /// <param name="modalViewModel">The modal view model.</param>
-        /// <param name="contract">The contract.</param>
         /// <param name="withNavigationPage">Value indicating whether to wrap the modal in a navigation page.</param>
         /// <returns>An observable that signals when the push has been completed.</returns>
-        IObservable<Unit> PushModal(IViewModel modalViewModel, string contract, bool withNavigationPage = true);
+        IObservable<Unit> PushModal(IViewModel modalViewModel, bool withNavigationPage = true);
 
         /// <summary>
         /// Pushes the page onto the navigation stack.
@@ -58,7 +57,6 @@ namespace Corellian
         /// <returns>An observable that signals when the push has been completed.</returns>
         IObservable<Unit> PushPage(
             IViewModel viewModel,
-            string contract,
             bool resetStack,
             bool animate = true);
     }

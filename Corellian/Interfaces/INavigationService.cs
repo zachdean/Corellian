@@ -69,7 +69,7 @@ namespace Corellian
         //
         // Returns:
         //     An observable that signals when the push has been completed.
-        IObservable<Unit> PushModal<TViewModel>(INavigationParameter parameter = null, bool withNavigationPage = true) where TViewModel : IViewModel;
+        IObservable<Unit> PushModal<TViewModel>(INavigationParameter? parameter = null, bool withNavigationPage = true) where TViewModel : IViewModel;
         //
         // Summary:
         //     Pushes the Sextant.INavigable onto the stack.
@@ -90,7 +90,7 @@ namespace Corellian
         //
         // Returns:
         //     An observable that signals when the push has been completed.
-        IObservable<Unit> PushPage<TViewModel>(INavigationParameter parameter = null, bool resetStack = false, bool animate = true) where TViewModel : IViewModel;
+        IObservable<Unit> PushPage<TViewModel>(INavigationParameter? parameter = null, bool resetStack = false, bool animate = true) where TViewModel : IViewModel;
 
         //
         // Summary:

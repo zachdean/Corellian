@@ -4,7 +4,7 @@ using CorellianSample.ViewModels;
 
 namespace CorellianSample.Views
 {
-	public partial class SecondModalView : ReactiveContentPage<ISecondModalViewModel>
+	public partial class SecondModalView
     {
 		public SecondModalView()
         {

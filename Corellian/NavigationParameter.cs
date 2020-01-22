@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 
 namespace Corellian
 {
-    public class NavigationParameter : Dictionary<string, object>, INavigationParameter
+    public class NavigationParameter : Dictionary<string, object?>, INavigationParameter
     {
     }
 }

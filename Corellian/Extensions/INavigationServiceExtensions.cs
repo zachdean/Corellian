@@ -8,15 +8,19 @@ namespace Corellian.Core.Extensions
 {
     public static class INavigationServiceExtensions
     {
-        public static ReactiveCommand<Unit, Unit> GetPushModalCommand<T>(this INavigationService service, Func<INavigationParameter> parameter = null, bool withNavigationPage = true) where T : IViewModel =>
+        public static ReactiveCommand<Unit, Unit> GetPushModalCommand<T>(this INavigationService service, Func<INavigationParameter>? parameter = null, bool withNavigationPage = true) where T : IViewModel =>
             ReactiveCommand.CreateFromObservable(() =>
+#pragma warning disable CS8604 // Possible null reference argument.
                             service.PushModal<T>(parameter?.Invoke(), withNavigationPage),
+#pragma warning restore CS8604 // Possible null reference argument.
                             service.CanNavigate,
                             outputScheduler: RxApp.MainThreadScheduler);
 
-        public static ReactiveCommand<Unit, Unit> GetPushPageCommand<T>(this INavigationService service, Func<INavigationParameter> parameter = null, bool resetStack = false, bool animate = true) where T : IViewModel =>
+        public static ReactiveCommand<Unit, Unit> GetPushPageCommand<T>(this INavigationService service, Func<INavigationParameter>? parameter = null, bool resetStack = false, bool animate = true) where T : IViewModel =>
             ReactiveCommand.CreateFromObservable(() =>
+#pragma warning disable CS8604 // Possible null reference argument.
                             service.PushPage<T>(parameter?.Invoke(), resetStack, animate),
+#pragma warning restore CS8604 // Possible null reference argument.
                             service.CanNavigate,
                             outputScheduler: RxApp.MainThreadScheduler);
 

@@ -5,7 +5,7 @@ using System.Reactive.Disposables;
 
 namespace CorellianSample.Views
 {
-    public partial class HomeView : ReactiveContentPage<IHomeViewModel>
+    public partial class HomeView
     {
         public HomeView()
         {

@@ -15,7 +15,7 @@ namespace CorellianSample.ViewModels
 
         public ReactiveCommand<Unit, Unit> PushPage { get; set; }
 
-        public HomeViewModel(INavigationService viewStackService = null)
+        public HomeViewModel(INavigationService viewStackService)
             : base(viewStackService)
         {
             OpenModal = NavigationService.GetPushModalCommand<IFirstModalViewModel>();

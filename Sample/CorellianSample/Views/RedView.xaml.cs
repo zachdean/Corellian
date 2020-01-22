@@ -4,7 +4,7 @@ using CorellianSample.ViewModels;
 
 namespace CorellianSample.Views
 {
-	public partial class RedView : ReactiveContentPage<IRedViewModel>, IViewFor<RedViewModel>
+	public partial class RedView : IViewFor<RedViewModel>
     {
         public RedView()
         {
@@ -23,6 +23,8 @@ namespace CorellianSample.Views
                 });
         }
 
-        RedViewModel IViewFor<RedViewModel>.ViewModel { get => ViewModel as RedViewModel; set => ViewModel = value; }
+#pragma warning disable CS8616 // Nullability of reference types in return type doesn't match implemented member.
+        RedViewModel? IViewFor<RedViewModel>.ViewModel { get => ViewModel as RedViewModel; set => ViewModel = value; }
+#pragma warning restore CS8616 // Nullability of reference types in return type doesn't match implemented member.
     }
 }

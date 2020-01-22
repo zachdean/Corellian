@@ -2,7 +2,7 @@
 
 namespace Corellian
 {
-    public interface INavigationParameter : IReadOnlyDictionary<string,object>
+    public interface INavigationParameter : IReadOnlyDictionary<string,object?>
     {
     }
 }

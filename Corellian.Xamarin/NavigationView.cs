@@ -69,12 +69,12 @@ namespace Corellian.Xamarin
                 .ObserveOn(_mainScheduler);
 
         /// <inheritdoc />
-        public IObservable<Unit> PushModal(IViewModel modalViewModel, string contract, bool withNavigationPage = true) =>
+        public IObservable<Unit> PushModal(IViewModel modalViewModel, bool withNavigationPage = true) =>
             Observable
                 .Start(
                     () =>
                     {
-                        var page = LocatePageFor(modalViewModel, contract);
+                        var page = LocatePageFor(modalViewModel);
                         SetPageTitle(page, modalViewModel.Id);
                         if (withNavigationPage)
                         {
@@ -97,14 +97,13 @@ namespace Corellian.Xamarin
         /// <inheritdoc />
         public IObservable<Unit> PushPage(
             IViewModel viewModel,
-            string contract,
             bool resetStack,
             bool animate) =>
             Observable
                 .Start(
                     () =>
                     {
-                        var page = LocatePageFor(viewModel, contract);
+                        var page = LocatePageFor(viewModel);
                         SetPageTitle(page, viewModel.Id);
                         return page;
                     },
@@ -148,24 +147,24 @@ namespace Corellian.Xamarin
             return navigationPage;
         }
 
-        private Page LocatePageFor(object viewModel, string contract)
+        private Page LocatePageFor(object viewModel)
         {
-            var view = _viewLocator.ResolveView(viewModel, contract);
+            var view = _viewLocator.ResolveView(viewModel, null);
             var page = view as Page;
 
             if (view == null)
             {
-                throw new InvalidOperationException($"No view could be located for type '{viewModel.GetType().FullName}', contract '{contract}'. Be sure Splat has an appropriate registration.");
+                throw new InvalidOperationException($"No view could be located for type '{viewModel.GetType().FullName}'. Be sure Splat has an appropriate registration.");
             }
 
             if (view == null)
             {
-                throw new InvalidOperationException($"Resolved view '{view.GetType().FullName}' for type '{viewModel.GetType().FullName}', contract '{contract}' does not implement IViewFor.");
+                throw new InvalidOperationException($"Resolved view '{view.GetType().FullName}' for type '{viewModel.GetType().FullName}'' does not implement IViewFor.");
             }
 
             if (page == null)
             {
-                throw new InvalidOperationException($"Resolved view '{view.GetType().FullName}' for type '{viewModel.GetType().FullName}', contract '{contract}' is not a Page.");
+                throw new InvalidOperationException($"Resolved view '{view.GetType().FullName}' for type '{viewModel.GetType().FullName}' is not a Page.");
             }
 
             view.ViewModel = viewModel;

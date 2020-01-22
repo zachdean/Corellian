@@ -224,7 +224,7 @@ namespace Corellian.Test
             navigationService.PushModal<ITestInterface>(withNavigationPage: withNavigationPage);
 
             serviceProvider.Received().GetService<ITestInterface>();
-            view.Received().PushModal(Arg.Any<TestClass>(), null, withNavigationPage);
+            view.Received().PushModal(Arg.Any<TestClass>(), withNavigationPage);
         }
 
         [Fact]
@@ -247,7 +247,7 @@ namespace Corellian.Test
             navigationService.PushPage<ITestInterface>(resetStack: resetStack, animate :animate);
 
             serviceProvider.Received().GetService<ITestInterface>();
-            view.Received().PushPage(Arg.Any<TestClass>(), null, resetStack, animate);
+            view.Received().PushPage(Arg.Any<TestClass>(), resetStack, animate);
         }
 
         [Fact]
@@ -322,7 +322,7 @@ namespace Corellian.Test
             await navigationService.PushModal<ITestInterface>(withNavigationPage: withNavigationPage);
 
             // Then
-            await view.Received().PushModal(Arg.Any<ITestInterface>(), null, withNavigationPage);
+            await view.Received().PushModal(Arg.Any<ITestInterface>(), withNavigationPage);
         }
 
         /// <summary>
@@ -352,7 +352,7 @@ namespace Corellian.Test
             await navigationService.PushModal<ITestInterface>();
 
             // Then
-            await view.Received().PushModal(Arg.Any<IViewModel>(), Arg.Any<string>());
+            await view.Received().PushModal(Arg.Any<IViewModel>());
         }
 
         /// <summary>
@@ -379,7 +379,7 @@ namespace Corellian.Test
             await navigationService.PushModal<ITestInterface>();
 
             // Then
-            await view.Received().PushModal(Arg.Any<IViewModel>(), Arg.Any<string>());
+            await view.Received().PushModal(Arg.Any<IViewModel>());
 
             canNavigateStack.Should().HaveCount(3);
             canNavigateStack[0].Should().BeTrue();
@@ -435,7 +435,7 @@ namespace Corellian.Test
             await navigationService.PushPage<ITestInterface>();
 
             // Then
-            await view.Received().PushPage(Arg.Any<IViewModel>(), null, false, true);
+            await view.Received().PushPage(Arg.Any<IViewModel>(), false, true);
         }
 
         /// <summary>
@@ -467,7 +467,7 @@ namespace Corellian.Test
             await navigationService.PushPage<ITestInterface>();
 
             // Then
-            await view.Received().PushPage(Arg.Any<IViewModel>(), null, false, true);
+            await view.Received().PushPage(Arg.Any<IViewModel>(), false, true);
 
             canNavigateStack.Should().HaveCount(3);
             canNavigateStack[0].Should().BeTrue();

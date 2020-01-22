@@ -12,7 +12,7 @@ namespace Corellian
         /// <param name="parameter">Navigation Paramter</param>
         /// <param name="key">Paramter Key</param>
         /// <returns></returns>
-        public static T GetParameter<T>(this INavigationParameter parameter, string key)
+        public static T? GetParameter<T>(this INavigationParameter parameter, string key) where T : class
         {
             if (!parameter.TryGetValue(key, out var result))
             {
@@ -42,10 +42,16 @@ namespace Corellian
         /// <param name="key">parameter key</param>
         /// <returns>pass parameter</returns>
         /// <exception cref="KeyNotFoundException" />
+        /// <exception cref="ArgumentNullException" />
         /// <exception cref="InvalidCastException" />
         public static T GetRequiredParameter<T>(this INavigationParameter parameter, string key)
         {
-            return (T)parameter[key];
+            var value = parameter[key];
+            if (value is null)
+            {
+                throw new ArgumentNullException(key);
+            }
+            return (T)value;
         }
     }
 }
