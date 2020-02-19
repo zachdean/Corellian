@@ -25,7 +25,7 @@ namespace Corellian.Xamarin
         /// <param name="mainScheduler">The main scheduler to scheduler UI tasks on.</param>
         /// <param name="backgroundScheduler">The background scheduler.</param>
         /// <param name="viewLocator">The view locator which will find views associated with view models.</param>
-        public NavigationView(IScheduler mainScheduler, IScheduler backgroundScheduler, IViewLocator viewLocator)
+        public NavigationView(IScheduler mainScheduler, IScheduler backgroundScheduler, IViewLocator viewLocator) : base(new Page())
         {
             _backgroundScheduler = backgroundScheduler;
             _mainScheduler = mainScheduler;
@@ -82,8 +82,8 @@ namespace Corellian.Xamarin
 
                         return page;
                     },
-                    CurrentThreadScheduler.Instance)
-                .ObserveOn(CurrentThreadScheduler.Instance)
+                    _backgroundScheduler)
+                .ObserveOn(_mainScheduler)
                 .SelectMany(
                     page =>
                         Navigation
@@ -95,8 +95,9 @@ namespace Corellian.Xamarin
             IViewModel viewModel,
             string contract,
             bool resetStack,
-            bool animate) =>
-            Observable
+            bool animate)
+        {
+            return Observable
                 .Start(
                     () =>
                     {
@@ -104,8 +105,8 @@ namespace Corellian.Xamarin
                         SetPageTitle(page, viewModel.Id);
                         return page;
                     },
-                    CurrentThreadScheduler.Instance)
-                .ObserveOn(CurrentThreadScheduler.Instance)
+                    _backgroundScheduler)
+                .ObserveOn(_mainScheduler)
                 .SelectMany(
                     page =>
                     {
@@ -129,6 +130,7 @@ namespace Corellian.Xamarin
                             .PushAsync(page, animate)
                             .ToObservable();
                     });
+        }
 
         private IView LocateNavigationFor(IViewModel viewModel)
         {

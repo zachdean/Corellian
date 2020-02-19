@@ -33,6 +33,7 @@ namespace CorellianSample.ViewModels
                 .CreateFromObservable(() =>
                     this.NavigationService.PushPage<IRedViewModel>(),
                     outputScheduler: RxApp.MainThreadScheduler);
+
             PopToRoot = ReactiveCommand
                 .CreateFromObservable(() =>
                     this.NavigationService.PopToRootPage(),

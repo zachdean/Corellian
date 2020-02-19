@@ -171,4 +171,9 @@
       <Name>CorellianSample</Name>
     </ProjectReference>
   </ItemGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties XamarinHotReloadWrongLinkerErrorInfoBarCorellianSampleiOSHideInfoBar="True" />
+    </VisualStudio>
+  </ProjectExtensions>
 </Project>

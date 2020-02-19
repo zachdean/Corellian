@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Diagnostics;
+using System.Threading;
 using Xamarin.Forms;
 
 namespace Corellian.Xamarin
@@ -11,6 +13,7 @@ namespace Corellian.Xamarin
         {
             var navigationService = provider.GetRequiredService<INavigationService>();
             navigationService.PushPage<TViewModel>(resetStack: true).Subscribe();
+
             app.MainPage = provider.GetNavigationView();
         }
     }

@@ -18,13 +18,11 @@ namespace CorellianSample.ViewModels
         {
             PushPage = ReactiveCommand
                 .CreateFromObservable(() =>
-                    this.NavigationService.PushPage<IRedViewModel>(),
-                    outputScheduler: RxApp.MainThreadScheduler);
+                    this.NavigationService.PushPage<IRedViewModel>());
 
             PopModal = ReactiveCommand
                 .CreateFromObservable(() =>
-                    this.NavigationService.PopModal(),
-                    outputScheduler: RxApp.MainThreadScheduler);
+                    this.NavigationService.PopModal());
 
             PushPage.Subscribe(x => Debug.WriteLine("PagePushed"));
             PopModal.Subscribe(x => Debug.WriteLine("PagePoped"));

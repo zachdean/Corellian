@@ -1,9 +1,11 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using ReactiveUI;
 using Splat;
 using System;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reactive;
+using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Runtime.CompilerServices;
@@ -17,6 +19,8 @@ namespace Corellian.Core.Services
     {
         private readonly IFullLogger logger;
         private readonly IServiceProvider serviceProvider;
+        private readonly IScheduler _taskPoolScheduler = RxApp.TaskpoolScheduler;
+        private readonly IScheduler _mainThreadScheduler = RxApp.MainThreadScheduler;
         /// <summary>
         /// Gets the modal subject.
         /// </summary>
@@ -50,44 +54,42 @@ namespace Corellian.Core.Services
         public IObservable<Unit> PopToRootPage(bool animate = true) => View.PopToRootPage(animate).Do(_ => PopRootAndTick(PageSubject));
 
         public IView View { get; }
-       
+
 
         public IObservable<Unit> PushModal<TViewModel>(INavigationParameter parameter = null, bool withNavigationPage = true) where TViewModel : IViewModel
         {
-            TViewModel viewModel = ResolveViewModel<TViewModel>();
-
-            if (viewModel is INavigatable paramViewModel)
-            {
-                paramViewModel.WhenNavigatingTo(parameter);
-            }
-
-            return View
-                .PushModal(viewModel, null, withNavigationPage)
-                .Do(_ =>
+            return ResolveViewModel<TViewModel>(parameter)
+                .Do(viewModel =>
                 {
-                    AddToStackAndTick(ModalSubject, viewModel, false);
-                    logger.Debug("Added modal '{modal.Id}' (contract '{contract}') to stack.");
-                });
+                    View
+                        .PushModal(viewModel, null, withNavigationPage)
+                        .ObserveOn(_taskPoolScheduler)
+                        .Do(_ =>
+                        {
+                            AddToStackAndTick(ModalSubject, viewModel, false);
+                            logger.Debug("Added modal '{modal.Id}' (contract '{contract}') to stack.");
+                        })
+                        .Subscribe();
+                })
+                .ToSignal();
         }
 
         public IObservable<Unit> PushPage<TViewModel>(INavigationParameter parameter = null, bool resetStack = false, bool animate = true) where TViewModel : IViewModel
         {
-            TViewModel viewModel = ResolveViewModel<TViewModel>();
-
-            if (viewModel is INavigatable paramViewModel)
-            {
-                paramViewModel.WhenNavigatingTo(parameter);
-            }
-
-            return View
-                .PushPage(viewModel, null, resetStack, animate)
-                .Do(_ =>
+            return ResolveViewModel<TViewModel>(parameter)
+                .Do(viewModel =>
                 {
-                    AddToStackAndTick(PageSubject, viewModel, resetStack);
-                    logger.Debug($"Added page '{viewModel.Id}' to stack.");
-                });
-
-            
+                    View
+                    .PushPage(viewModel, null, resetStack, animate)
+                    .ObserveOn(_taskPoolScheduler)
+                    .Do(_ =>
+                    {
+                        AddToStackAndTick(PageSubject, viewModel, resetStack);
+                        logger.Debug($"Added page '{viewModel.Id}' to stack.");
+                    })
+                    .Subscribe();
+                })
+                .ToSignal();
         }
 
         /// <summary>
@@ -121,7 +123,22 @@ namespace Corellian.Core.Services
                 }
             }).SubscribeSafe();
         }
-        private TViewModel ResolveViewModel<TViewModel>() => serviceProvider.GetRequiredService<TViewModel>();
+
+        private IObservable<TViewModel> ResolveViewModel<TViewModel>(INavigationParameter parameter)
+        {
+            return Observable.Start(() =>
+            {
+                var viewModel = serviceProvider.GetRequiredService<TViewModel>();
+
+                if (viewModel is INavigatable paramViewModel)
+                {
+                    paramViewModel.WhenNavigatingTo(parameter);
+                }
+
+                return viewModel;
+            }, _taskPoolScheduler);
+
+        }
         /// <inheritdoc />
         public void Dispose()
         {

@@ -18,13 +18,11 @@ namespace CorellianSample.ViewModels
         {
             OpenModal = ReactiveCommand
                 .CreateFromObservable(() =>
-                    this.NavigationService.PushModal<IFirstModalViewModel>(),
-                    outputScheduler: RxApp.MainThreadScheduler);
+                    this.NavigationService.PushModal<IFirstModalViewModel>());
 
             PushPage = ReactiveCommand
                 .CreateFromObservable(() =>
-                    this.NavigationService.PushPage<IRedViewModel>(),
-                    outputScheduler: RxApp.MainThreadScheduler);
+                    this.NavigationService.PushPage<IRedViewModel>());
 
             PushPage.ThrownExceptions.Subscribe(error => Interactions.ErrorMessage.Handle(error).Subscribe());
             OpenModal.ThrownExceptions.Subscribe(error => Interactions.ErrorMessage.Handle(error).Subscribe());
