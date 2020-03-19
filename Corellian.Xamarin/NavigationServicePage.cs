@@ -13,20 +13,32 @@ namespace Corellian.Xamarin
     /// <summary>
     /// The main navigation view.
     /// </summary>
-    public class NavigationView : NavigationPage, IView, IEnableLogger
+    public class NavigationServicePage : NavigationPage, IView, IEnableLogger
     {
         private readonly IScheduler _backgroundScheduler;
         private readonly IScheduler _mainScheduler;
         private readonly IViewLocator _viewLocator;
         private readonly IFullLogger _logger;
 
+        public NavigationServicePage(IScheduler mainScheduler, IScheduler backgroundScheduler, IViewLocator viewLocator, Page page) : base(page)
+        {
+            _backgroundScheduler = backgroundScheduler;
+            _mainScheduler = mainScheduler;
+            _viewLocator = viewLocator;
+
+            PagePopped = Observable
+                .FromEventPattern<NavigationEventArgs>(x => Popped += x, x => Popped -= x)
+                .Select(ep => ep.EventArgs.Page.BindingContext as IViewModel)
+                .WhereNotNull();
+        }
+
         /// <summary>
-        /// Initializes a new instance of the <see cref="NavigationView"/> class.
+        /// Initializes a new instance of the <see cref="NavigationServicePage"/> class.
         /// </summary>
         /// <param name="mainScheduler">The main scheduler to scheduler UI tasks on.</param>
         /// <param name="backgroundScheduler">The background scheduler.</param>
         /// <param name="viewLocator">The view locator which will find views associated with view models.</param>
-        public NavigationView(IScheduler mainScheduler, IScheduler backgroundScheduler, IViewLocator viewLocator)
+        public NavigationServicePage(IScheduler mainScheduler, IScheduler backgroundScheduler, IViewLocator viewLocator)
         {
             _backgroundScheduler = backgroundScheduler;
             _mainScheduler = mainScheduler;
@@ -78,13 +90,13 @@ namespace Corellian.Xamarin
                         SetPageTitle(page, modalViewModel.Id);
                         if (withNavigationPage)
                         {
-                            return new NavigationPage(page);
+                            return new NavigationServicePage(_mainScheduler,_backgroundScheduler,_viewLocator,page);
                         }
 
                         return page;
                     },
                     CurrentThreadScheduler.Instance)
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(_mainScheduler)
                 .SelectMany(
                     page => { MainThread.BeginInvokeOnMainThread(async () =>
                      {
@@ -100,56 +112,50 @@ namespace Corellian.Xamarin
             bool resetStack,
             bool animate) =>
             Observable
-                .Start(
-                    () =>
-                    {
-                        var page = LocatePageFor(viewModel);
-                        SetPageTitle(page, viewModel.Id);
-                        return page;
-                    },
-                    CurrentThreadScheduler.Instance)
-                .ObserveOn(CurrentThreadScheduler.Instance)
-                .SelectMany(
-                    page =>
-                    {
-                        if (resetStack)
-                        {
-                            if (Navigation.NavigationStack.Count == 0)
-                            {
-                                return Navigation.PushAsync(page, false).ToObservable();
-                            }
+                .Start(() => LocatePageFor(viewModel), CurrentThreadScheduler.Instance)
+                .ObserveOn(_mainScheduler)
+                .SelectMany(page => PushPageOnNavigation(resetStack, animate, page));
 
-                            // XF does not allow us to pop to a new root page. Instead, we need to inject the new root page and then pop to it.
-                            Navigation
-                                .InsertPageBefore(page, Navigation.NavigationStack[0]);
+        private IObservable<Unit> PushPageOnNavigation(bool resetStack, bool animate, Page page)
+        {
+            if (resetStack)
+            {
+                if (Navigation.NavigationStack.Count == 0)
+                {
+                    return Navigation.PushAsync(page, false).ToObservable();
+                }
 
-                            return Navigation
-                                .PopToRootAsync(false)
-                                .ToObservable();
-                        }
+                // XF does not allow us to pop to a new root page. Instead, we need to inject the new root page and then pop to it.
+                Navigation
+                    .InsertPageBefore(page, Navigation.NavigationStack[0]);
 
-                        return Navigation
-                            .PushAsync(page, animate)
-                            .ToObservable();
-                    });
+                return Navigation
+                    .PopToRootAsync(false)
+                    .ToObservable();
+            }
+
+            return Navigation
+                .PushAsync(page, animate)
+                .ToObservable();
+        }
 
         private IView LocateNavigationFor(IViewModel viewModel)
         {
-            var view = _viewLocator.ResolveView(viewModel, "NavigationView");
+            var view = _viewLocator.ResolveView(viewModel);
             var navigationPage = view as IView;
 
             if (navigationPage is null)
             {
                 _logger.Debug($"No navigation view could be located for type '{viewModel.GetType().FullName}', using the default navigation page.");
-                navigationPage = Locator.Current.GetService<IView>(nameof(NavigationView)) ?? Locator.Current.GetService<IView>();
+                navigationPage = Locator.Current.GetService<IView>(nameof(NavigationServicePage)) ?? Locator.Current.GetService<IView>();
             }
 
             return navigationPage;
         }
 
-        private Page LocatePageFor(object viewModel)
+        private Page LocatePageFor(IViewModel viewModel)
         {
-            var view = _viewLocator.ResolveView(viewModel, null);
+            var view = _viewLocator.ResolveView(viewModel);
             var page = view as Page;
 
             if (view == null)
@@ -168,7 +174,7 @@ namespace Corellian.Xamarin
             }
 
             view.ViewModel = viewModel;
-
+            SetPageTitle(page, viewModel.Id);
             return page;
         }
 

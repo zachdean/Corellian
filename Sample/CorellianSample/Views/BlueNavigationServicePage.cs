@@ -6,9 +6,9 @@ using Xamarin.Forms;
 
 namespace CorellianSample.Views
 {
-    public class BlueNavigationView : NavigationView, IViewFor
+    public class BlueNavigationServicePage : NavigationServicePage, IViewFor
     {
-        public BlueNavigationView(IViewLocator viewLocator)
+        public BlueNavigationServicePage(IViewLocator viewLocator)
             : base(RxApp.MainThreadScheduler, RxApp.TaskpoolScheduler, viewLocator)
         {
             this.BarBackgroundColor = Color.Blue;

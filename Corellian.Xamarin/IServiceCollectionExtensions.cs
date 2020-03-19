@@ -10,7 +10,7 @@ namespace Corellian.Xamarin
             services.UseMicrosoftDependencyInjection();
 
             //register navigation view
-            services.AddSingleton<IView>(sp => new NavigationView(RxApp.MainThreadScheduler, RxApp.TaskpoolScheduler, sp.GetRequiredService<IViewLocator>()));
+            services.AddSingleton<IView>(sp => new NavigationServicePage(RxApp.MainThreadScheduler, RxApp.TaskpoolScheduler, sp.GetRequiredService<IViewLocator>()));
 
             //register core items
             services.AddCorellianCore();            

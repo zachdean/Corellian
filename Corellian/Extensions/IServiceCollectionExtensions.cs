@@ -5,6 +5,8 @@ using Splat;
 using Splat.Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
+using System.Reactive.Concurrency;
+using System.Threading.Tasks;
 
 namespace Corellian
 {
@@ -20,10 +22,15 @@ namespace Corellian
         internal static IServiceCollection UseMicrosoftDependencyInjection(this IServiceCollection services)
         {
             services.UseMicrosoftDependencyResolver();
-            
-            var resolver = Locator.CurrentMutable;
-            resolver.InitializeSplat();
-            resolver.InitializeReactiveUI();
+
+            Task.Run(() =>
+            {
+                services.UseMicrosoftDependencyResolver();
+                var resolver = Locator.CurrentMutable;
+                resolver.InitializeSplat();
+            });
+
+            services.AddReactiveUI();
             services.AddTransient<ILogger, NullLogger>();
             services.AddSingleton<IFullLogger, WrappingFullLogger>();
 
@@ -44,6 +51,23 @@ namespace Corellian
 
             services.AddSingleton<IViewLocator, Core.Services.ViewLocator>();
             services.AddSingleton<INavigationService, NavigationService>();
+            return services;
+        }
+
+        internal static IServiceCollection AddReactiveUI(this IServiceCollection services)
+        {
+            services.AddSingleton<ICreatesObservableForProperty, INPCObservableForProperty>();
+            services.AddSingleton<ICreatesObservableForProperty, IROObservableForProperty>();
+            services.AddSingleton<ICreatesObservableForProperty, POCOObservableForProperty>();
+            services.AddSingleton<IBindingTypeConverter, EqualityTypeConverter>();
+            services.AddSingleton<IBindingTypeConverter, StringConverter>();
+            services.AddSingleton<IActivationForViewFetcher, CanActivateViewFetcher>();
+            services.AddSingleton<ICreatesCommandBinding, CreatesCommandBindingViaEvent>();
+            services.AddSingleton<ICreatesCommandBinding, CreatesCommandBindingViaCommandParameter>();
+
+            RxApp.TaskpoolScheduler = TaskPoolScheduler.Default;
+            RxApp.MainThreadScheduler = DefaultScheduler.Instance;
+
             return services;
         }
     }

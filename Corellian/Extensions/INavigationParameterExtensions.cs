@@ -6,13 +6,13 @@ namespace Corellian
     public static class INavigationParameterExtensions
     {
         /// <summary>
-        /// Gets the parameter, returns defualt if not found or type is invalid
+        /// Gets the parameter, returns default if not found or type is invalid
         /// </summary>
         /// <typeparam name="T">Parameter Type</typeparam>
-        /// <param name="parameter">Navigation Paramter</param>
-        /// <param name="key">Paramter Key</param>
+        /// <param name="parameter">Navigation Parameter</param>
+        /// <param name="key">Parameter Key</param>
         /// <returns></returns>
-        public static T? GetParameter<T>(this INavigationParameter parameter, string key) where T : class
+        public static T GetParameter<T>(this INavigationParameter parameter, string key)
         {
             if (!parameter.TryGetValue(key, out var result))
             {
